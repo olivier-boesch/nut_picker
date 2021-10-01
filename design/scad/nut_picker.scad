@@ -26,7 +26,7 @@ tol_vis = 0.15;
 tol_emboitement = 0.05;
 
 //what to export on render
-export = "up"; // "nut" or "up", "down", "left", "right", "front", "rear", "test_nut_bolt"
+export = "nut"; // "nut" or "up", "down", "left", "right", "front", "rear", "test_nut_bolt"
 
 module complete_nut(d=27, tol=tol_vis){
 	N = 5;
