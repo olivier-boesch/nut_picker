@@ -20,13 +20,13 @@ ep_matiere = 4; //mm - material thickness
 ep_accroche = ep_matiere /2; //mm - fix thickness
 
 //screw clearance
-tol_vis = 0.3;
+tol_vis = 0.15;
 
 //fix clearance
 tol_emboitement = 0.05;
 
 //what to export on render
-export = "nut"; // or "up", "down", "left", "right", "front", "rear"
+export = "up"; // "nut" or "up", "down", "left", "right", "front", "rear", "test_nut_bolt"
 
 module complete_nut(d=27, tol=tol_vis){
 	N = 5;
@@ -134,8 +134,8 @@ module ymax(){
 module up(){
 	difference(){
 		union(){
-			linear_extrude(ep_matiere/2) square([L-ep_matiere/2,W-ep_matiere],center=true);
-			translate([-ep_matiere/4,0,ep_matiere/2]) linear_extrude(ep_matiere/2) square([L-ep_matiere,W-2*ep_matiere],center=true);
+			linear_extrude(ep_matiere/2) square([L-ep_matiere,W-ep_matiere],center=true);
+			translate([-ep_matiere/2,0,ep_matiere/2]) linear_extrude(ep_matiere/2) square([L-ep_matiere,W-2*ep_matiere],center=true);
 			translate([-L/2+ep_matiere/2,0,ep_matiere/2]) cube([ep_matiere,W,ep_matiere], center=true);
 		}
 		translate([-L/2+10,0,12]) difference(){
@@ -167,7 +167,7 @@ if($preview){
 	translate([0,0,H/2]) rotate([0,-90,0]) translate([0,0,L/2-ep_matiere]) xmax();
 	translate([0,0,H/2]) rotate([90,0,0]) translate([0,0,W/2-ep_matiere]) ymin();
 	translate([0,0,H/2]) rotate([-90,0,0])translate([0,0,W/2-ep_matiere]) ymax();
-	translate([-10,0,H-ep_matiere]) up();
+	translate([-20,0,H-ep_matiere]) up();
 }
 else{
 	if(export == "down") rotate([0,180,0]) down();
@@ -177,4 +177,8 @@ else{
 	if(export == "right") ymax();
 	if(export == "up") up();
 	if(export == "nut") rotate([0,180,0]) complete_nut(d=16);
+	if(export == "test_nut_bolt") let(P = thread_specs(str("M",16,"-ext"))[0], H_nut = P*5 +2+3){
+		translate([0,0,H_nut]) rotate([0,180,0]) complete_nut(d=16);
+		translate([30,0,0]) complete_bolt(d=16);
+	}
 }
