@@ -10,7 +10,12 @@
 
 use <threadlib/threadlib.scad>
 
-$fn=$preview?40:150;
+//$preview = true;
+
+//what to export on render
+export = "rear"; // "nut" or "up", "down", "left", "right", "front", "rear", "test_nut_bolt"
+
+$fn=$preview?30:200;
 
 L = 150; //mm - length (x)
 W = 100; //mm - width (y)
@@ -24,9 +29,6 @@ tol_vis = 0.15;
 
 //fix clearance
 tol_emboitement = 0.05;
-
-//what to export on render
-export = "nut"; // "nut" or "up", "down", "left", "right", "front", "rear", "test_nut_bolt"
 
 module complete_nut(d=27, tol=tol_vis){
 	N = 5;
@@ -53,7 +55,8 @@ module complete_bolt(d=27, tol = tol_vis){
 //---- box
 
 module down(){
-	translate([0,0]){
+	mat_color = $preview?"#333333":undef;
+	color(mat_color) translate([0,0]){
 		difference(){
 			linear_extrude(ep_matiere/2) square([L-2*ep_matiere,W-2*ep_matiere],center=true);
 			translate([0,0,1]) rotate([180,0,0]) linear_extrude(2) text("NP", valign="center", halign="center", size=60);
@@ -71,8 +74,9 @@ module down(){
 
 
 //-x
-module xmin(){
-	difference(){
+module xmin(nut_color="Crimson"){
+	mat_color = $preview?"#333333":undef;
+	color(mat_color) difference(){
 		linear_extrude(ep_matiere) square([W,H],center=true);
 		translate([W/2-0.75*ep_matiere,0,1]) cube([ep_matiere/2+tol_emboitement,W-ep_matiere+tol_emboitement,2.5], center=true);
 		rotate([0,0,90]) translate([W/2-0.75*ep_matiere,0,1]) cube([ep_matiere/2+tol_emboitement,H-ep_matiere+tol_emboitement,2.5], center=true);
@@ -80,12 +84,12 @@ module xmin(){
 		rotate([0,0,180]) translate([W/2-0.75*ep_matiere,0,1]) cube([ep_matiere/2+tol_emboitement,W-ep_matiere+tol_emboitement,2.5], center=true);
 	}
 	translate([H/6,W/4,ep_matiere]){
-		complete_bolt(d=16);
-		if($preview) translate([0,0,30]) complete_nut(d=16);
+		color(mat_color) complete_bolt(d=16);
+		if($preview) color(nut_color) translate([0,0,30]) complete_nut(d=16);
 	}
 	translate([-H/4,-W/4,ep_matiere]){
-		complete_bolt(d=16);
-		if($preview) translate([0,0,30]) complete_nut(d=16);
+		color(mat_color) complete_bolt(d=16);
+		if($preview) color(nut_color) translate([0,0,30]) complete_nut(d=16);
 	}
 }
 
@@ -96,8 +100,9 @@ module xmax(){
 		}
 }
 
-module ymin(){
-	difference(){
+module ymin(nut_color = "SpringGreen"){
+	mat_color = $preview?"#333333":undef;
+	color(mat_color) difference(){
 		union(){
 			linear_extrude(ep_matiere/2) square([L-ep_matiere,H],center=true);
 			translate([0,0,ep_matiere/2]) linear_extrude(ep_matiere/2) square([L-2*ep_matiere,H],center=true);
@@ -110,29 +115,30 @@ module ymin(){
 		translate([0,H/2-3*ep_matiere/4,ep_matiere/4]) cube([L,ep_matiere/2+tol_emboitement,ep_matiere/2+tol_emboitement], center=true);
 	}
 	translate([-L/3,-H/5+5,ep_matiere]){
-		complete_bolt(d=16);
-		if($preview) translate([0,0,30]) complete_nut(d=16);
+		color(mat_color) complete_bolt(d=16);
+		if($preview) color(nut_color) translate([0,0,30]) complete_nut(d=16);
 	}
 	translate([L/10,-H/5+5,ep_matiere]){
-		complete_bolt(d=16);
-		if($preview) translate([0,0,30]) complete_nut(d=16);
+		color(mat_color) complete_bolt(d=16);
+		if($preview) color(nut_color) translate([0,0,30]) complete_nut(d=16);
 	}
 	translate([L/3,H/4,ep_matiere]){
-		complete_bolt(d=16);
-		if($preview) translate([0,0,30]) complete_nut(d=16);
+		color(mat_color) complete_bolt(d=16);
+		if($preview) color(nut_color) translate([0,0,30]) complete_nut(d=16);
 	}
 	translate([-L/10,H/4,ep_matiere]){
-		complete_bolt(d=16);
-		if($preview) translate([0,0,30]) complete_nut(d=16);
+		color(mat_color) complete_bolt(d=16);
+		if($preview) color(nut_color) translate([0,0,30]) complete_nut(d=16);
 	}
 }
 
 module ymax(){
-	rotate([0,0,180]) ymin();
+	rotate([0,0,180]) ymin(nut_color="yellow");
 }
 
-module up(){
-	difference(){
+module up(nut_color="Violet"){
+	mat_color = $preview?"#333333":undef;
+	color(mat_color) difference(){
 		union(){
 			linear_extrude(ep_matiere/2) square([L-ep_matiere,W-ep_matiere],center=true);
 			translate([-ep_matiere/2,0,ep_matiere/2]) linear_extrude(ep_matiere/2) square([L-ep_matiere,W-2*ep_matiere],center=true);
@@ -144,20 +150,20 @@ module up(){
 		}
 	}
 	translate([-L/3,-W/4,ep_matiere]){
-		complete_bolt(d=16);
-		if($preview) translate([0,0,30]) complete_nut(d=16);
+		color(mat_color) complete_bolt(d=16);
+		if($preview) color(nut_color) translate([0,0,30]) complete_nut(d=16);
 	}
 	translate([L/10,-W/4,ep_matiere]){
-		complete_bolt(d=16);
-		if($preview) translate([0,0,30]) complete_nut(d=16);
+		color(mat_color) complete_bolt(d=16);
+		if($preview) color(nut_color) translate([0,0,30]) complete_nut(d=16);
 	}
 	translate([L/3,W/4,ep_matiere]){
-		complete_bolt(d=16);
-		if($preview) translate([0,0,30]) complete_nut(d=16);
+		color(mat_color) complete_bolt(d=16);
+		if($preview) color(nut_color) translate([0,0,30]) complete_nut(d=16);
 	}
 	translate([-L/10,W/4,ep_matiere]){
-		complete_bolt(d=16);
-		if($preview) translate([0,0,30]) complete_nut(d=16);
+		color(mat_color) complete_bolt(d=16);
+		if($preview) color(nut_color) translate([0,0,30]) complete_nut(d=16);
 	}
 }
 
