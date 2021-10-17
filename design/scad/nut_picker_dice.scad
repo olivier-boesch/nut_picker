@@ -8,7 +8,11 @@
 
 */
 
-$fn=$preview?80:300;
+//$preview=true;
+
+$fn=$preview?100:300;
+
+colors = ["#333333", "red", "#FFaaFF", "#FFFF00", "#aaFFaa", "white"];
 
 //what to export on render
 export = "body"; // "body", "round" or "cross"
@@ -39,12 +43,12 @@ module round(d_off=0, h_off=0){
 }
 
 if($preview){
-	color("#333333") body();
-	color("red") translate([0,0,5]) round();
-	color("#FFaaFF") rotate([180,0,0]) translate([0,0,5]) round();
-	color("#FFFF00") rotate([90,0,0]) translate([0,0,5]) round();
-	color("#aaFFaa") rotate([-90,0,0]) translate([0,0,5]) round();
-	color("white") rotate([0,-90,0]) translate([0,0,5]) cross();
+	color(colors[0]) body();
+	color(colors[1]) translate([0,0,5]) round();
+	color(colors[2]) rotate([180,0,0]) translate([0,0,5]) round();
+	color(colors[3]) rotate([90,0,0]) translate([0,0,5]) round();
+	color(colors[4]) rotate([-90,0,0]) translate([0,0,5]) round();
+	color(colors[5]) rotate([0,-90,0]) translate([0,0,5]) cross();
 }
 else{
 	if (export == "body") rotate([0,90,0]) body();

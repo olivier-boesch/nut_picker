@@ -17,6 +17,8 @@ export = "rear"; // "nut" or "up", "down", "left", "right", "front", "rear", "te
 
 $fn=$preview?30:200;
 
+colors = ["#333333", "red", "#FFaaFF", "#FFFF00", "#aaFFaa", "white"];
+
 L = 150; //mm - length (x)
 W = 100; //mm - width (y)
 H = 100; //mm - height (z)
@@ -55,7 +57,7 @@ module complete_bolt(d=27, tol = tol_vis){
 //---- box
 
 module down(){
-	mat_color = $preview?"#333333":undef;
+	mat_color = $preview?colors[0]:undef;
 	color(mat_color) translate([0,0]){
 		difference(){
 			linear_extrude(ep_matiere/2) square([L-2*ep_matiere,W-2*ep_matiere],center=true);
@@ -75,7 +77,7 @@ module down(){
 
 //-x
 module xmin(nut_color="Crimson"){
-	mat_color = $preview?"#333333":undef;
+	mat_color = $preview?colors[0]:undef;
 	color(mat_color) difference(){
 		linear_extrude(ep_matiere) square([W,H],center=true);
 		translate([W/2-0.75*ep_matiere,0,1]) cube([ep_matiere/2+tol_emboitement,W-ep_matiere+tol_emboitement,2.5], center=true);
@@ -85,11 +87,11 @@ module xmin(nut_color="Crimson"){
 	}
 	translate([H/6,W/4,ep_matiere]){
 		color(mat_color) complete_bolt(d=16);
-		if($preview) color(nut_color) translate([0,0,30]) complete_nut(d=16);
+		if($preview) color(colors[1]) translate([0,0,30]) complete_nut(d=16);
 	}
 	translate([-H/4,-W/4,ep_matiere]){
 		color(mat_color) complete_bolt(d=16);
-		if($preview) color(nut_color) translate([0,0,30]) complete_nut(d=16);
+		if($preview) color(colors[1]) translate([0,0,30]) complete_nut(d=16);
 	}
 }
 
@@ -100,8 +102,8 @@ module xmax(){
 		}
 }
 
-module ymin(nut_color = "SpringGreen"){
-	mat_color = $preview?"#333333":undef;
+module ymin(nut_color = colors[2]){
+	mat_color = $preview?colors[0]:undef;
 	color(mat_color) difference(){
 		union(){
 			linear_extrude(ep_matiere/2) square([L-ep_matiere,H],center=true);
@@ -133,11 +135,11 @@ module ymin(nut_color = "SpringGreen"){
 }
 
 module ymax(){
-	rotate([0,0,180]) ymin(nut_color="yellow");
+	rotate([0,0,180]) ymin(nut_color=colors[3]);
 }
 
-module up(nut_color="Violet"){
-	mat_color = $preview?"#333333":undef;
+module up(nut_color=colors[4]){
+	mat_color = $preview?colors[0]:undef;
 	color(mat_color) difference(){
 		union(){
 			linear_extrude(ep_matiere/2) square([L-ep_matiere,W-ep_matiere],center=true);
