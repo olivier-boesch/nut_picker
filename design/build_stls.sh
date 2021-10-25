@@ -31,6 +31,9 @@ echo "** exporting box (front side) to stl"
 openscad -D 'export="front"' scad/nut_picker.scad -o stl/front.stl
 echo "** exporting box (rear side) to stl"
 openscad -D 'export="rear"' scad/nut_picker.scad -o stl/rear.stl
+echo "** exporting pad to stl"
+openscad -D 'export="pad"' scad/nut_picker.scad -o stl/pad.stl
+
 
 echo "* exporting dice parts to stl"
 # export dice parts

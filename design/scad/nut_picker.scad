@@ -13,11 +13,11 @@ use <threadlib/threadlib.scad>
 //$preview = true;
 
 //what to export on render
-export = "rear"; // "nut" or "up", "down", "left", "right", "front", "rear", "test_nut_bolt"
+export = "rear"; // "nut" or "up", "down", "left", "right", "front", "rear", "test_nut_bolt", "pad"
 
 $fn=$preview?30:200;
 
-colors = ["#333333", "red", "#FFaaFF", "#FFFF00", "#aaFFaa", "white"];
+colors = ["#333333", "red", "#FFaaFF", "#FFFF00", "#aaFFaa", "white", "blue"];
 
 L = 150; //mm - length (x)
 W = 100; //mm - width (y)
@@ -31,6 +31,18 @@ tol_vis = 0.15;
 
 //fix clearance
 tol_emboitement = 0.05;
+
+module pad(off=0.0){
+	pos = [[-5,-5], [-5,5], [5,5], [5,-5]];
+	linear_extrude(2, center=true) offset(off) hull(){
+		for(p=pos) translate(p) circle(d=2);
+	}
+}
+
+//pad(off=1);
+//translate([0,0,2]) pad();
+
+
 
 module complete_nut(d=27, tol=tol_vis){
 	N = 5;
@@ -57,12 +69,14 @@ module complete_bolt(d=27, tol = tol_vis){
 //---- box
 
 module down(){
+	pad_pos=[[L/2-10, W/2-10],[-(L/2-10), W/2-10],[-(L/2-10), -(W/2-10)],[L/2-10, -(W/2-10)]];
 	mat_color = $preview?colors[0]:undef;
 	color(mat_color) translate([0,0]){
 		difference(){
 			linear_extrude(ep_matiere/2) square([L-2*ep_matiere,W-2*ep_matiere],center=true);
 			translate([0,0,1]) rotate([180,0,0]) linear_extrude(2) text("NP", valign="center", halign="center", size=60);
 			translate([L/4+5,W/4-4.5,1]) rotate([180,0,0]) linear_extrude(2) text("OB", valign="center", halign="center", size=15);
+			for(p=pad_pos) translate(p) pad(off=1);
 		}
 		translate([0,0,ep_matiere/2]) difference(){
 			linear_extrude(ep_matiere/2) square([L-ep_matiere,W-ep_matiere],center=true);
@@ -72,6 +86,7 @@ module down(){
 			translate([L/2-0.75*ep_matiere,-W/2+0.75*ep_matiere,ep_matiere/4]) cube(ep_accroche+tol_emboitement, center=true);
 		}
 	}
+	color(colors[6]) for(p=pad_pos) translate(p) pad();
 }
 
 
@@ -189,4 +204,5 @@ else{
 		translate([0,0,H_nut]) rotate([0,180,0]) complete_nut(d=16);
 		translate([30,0,0]) complete_bolt(d=16);
 	}
+	if(export == "pad") pad();
 }
