@@ -10,13 +10,17 @@
 
 use <threadlib/threadlib.scad>
 
-//$preview = true;
-
 //what to export on render
-export = "rear"; // "nut" or "up", "down", "left", "right", "front", "rear", "test_nut_bolt", "pad"
+export = "down"; // "nut" or "up", "down", "left", "right", "front", "rear", "test_nut_bolt", "pad"
 
-$fn=$preview?30:200;
+$fn = $preview?30:200; // fn to render parts (and all in preview)
 
+//---- export parameters to export the whole model
+//$fn = 100; // fn to render all
+//$preview = true; //force preview to render all
+
+
+//colors: box, nuts (x4), cross, pad (preview only)
 colors = ["#333333", "red", "#FFaaFF", "#FFFF00", "#aaFFaa", "white", "blue"];
 
 L = 150; //mm - length (x)
@@ -32,6 +36,7 @@ tol_vis = 0.15;
 //fix clearance
 tol_emboitement = 0.05;
 
+//pad to prevent slip from table
 module pad(off=0.0){
 	pos = [[-5,-5], [-5,5], [5,5], [5,-5]];
 	linear_extrude(2, center=true) offset(off) hull(){
@@ -43,7 +48,7 @@ module pad(off=0.0){
 //translate([0,0,2]) pad();
 
 
-
+//nut
 module complete_nut(d=27, tol=tol_vis){
 	N = 5;
 	P = thread_specs(str("M",d,"-ext"))[0];
@@ -61,22 +66,23 @@ module complete_nut(d=27, tol=tol_vis){
 	}
 }
 
+//bolt part
 module complete_bolt(d=27, tol = tol_vis){
 	cylinder(d1=d+5, d2=d, h=5);
 	translate([0,0,5.99]) bolt(str("M", d), turns=5, fn=$fn, tol=tol);
 }
 
 //---- box
-
+//down side
 module down(){
-	pad_pos=[[L/2-10, W/2-10],[-(L/2-10), W/2-10],[-(L/2-10), -(W/2-10)],[L/2-10, -(W/2-10)]];
+	pad_pos=[[L/2-12, W/2-12],[-(L/2-12), W/2-12],[-(L/2-12), -(W/2-12)],[L/2-12, -(W/2-12)]];
 	mat_color = $preview?colors[0]:undef;
 	color(mat_color) translate([0,0]){
 		difference(){
 			linear_extrude(ep_matiere/2) square([L-2*ep_matiere,W-2*ep_matiere],center=true);
 			translate([0,0,1]) rotate([180,0,0]) linear_extrude(2) text("NP", valign="center", halign="center", size=60);
 			translate([L/4+5,W/4-4.5,1]) rotate([180,0,0]) linear_extrude(2) text("OB", valign="center", halign="center", size=15);
-			for(p=pad_pos) translate(p) pad(off=1);
+			for(p=pad_pos) translate(p) pad(off=0.5);
 		}
 		translate([0,0,ep_matiere/2]) difference(){
 			linear_extrude(ep_matiere/2) square([L-ep_matiere,W-ep_matiere],center=true);
@@ -86,7 +92,7 @@ module down(){
 			translate([L/2-0.75*ep_matiere,-W/2+0.75*ep_matiere,ep_matiere/4]) cube(ep_accroche+tol_emboitement, center=true);
 		}
 	}
-	color(colors[6]) for(p=pad_pos) translate(p) pad();
+	if($preview) color(colors[6]) for(p=pad_pos) translate(p) pad();
 }
 
 
@@ -110,6 +116,7 @@ module xmin(nut_color="Crimson"){
 	}
 }
 
+//+x
 module xmax(){
 		rotate([0,0,180]) difference(){
 			xmin();
@@ -117,6 +124,7 @@ module xmax(){
 		}
 }
 
+//-y
 module ymin(nut_color = colors[2]){
 	mat_color = $preview?colors[0]:undef;
 	color(mat_color) difference(){
@@ -149,10 +157,12 @@ module ymin(nut_color = colors[2]){
 	}
 }
 
+//+y
 module ymax(){
 	rotate([0,0,180]) ymin(nut_color=colors[3]);
 }
 
+//up side
 module up(nut_color=colors[4]){
 	mat_color = $preview?colors[0]:undef;
 	color(mat_color) difference(){
@@ -184,6 +194,7 @@ module up(nut_color=colors[4]){
 	}
 }
 
+//preview of all box
 if($preview){
 	down();
 	translate([0,0,H/2]) rotate([0,90,0]) translate([0,0,L/2-ep_matiere]) xmin();
@@ -192,6 +203,8 @@ if($preview){
 	translate([0,0,H/2]) rotate([-90,0,0])translate([0,0,W/2-ep_matiere]) ymax();
 	translate([-20,0,H-ep_matiere]) up();
 }
+
+//export part by part
 else{
 	if(export == "down") rotate([0,180,0]) down();
 	if(export == "rear") xmin();
